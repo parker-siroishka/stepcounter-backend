@@ -1,5 +1,87 @@
+# Build results and binary files
 bin/
 obj/
-/packages/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# Visual Studio and IDE files
+.vs/
+.vscode/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+.idea/
 riderModule.iml
 /_ReSharper.Caches/
+*.DotSettings.user
+
+# NuGet packages
+/packages/
+*.nupkg
+# NuGet Symbol Packages
+*.snupkg
+
+# Sensitive configuration files
+appsettings.*.json
+!appsettings.json
+*.Development.json
+*.Production.json
+*.Staging.json
+*.local.json
+secrets.json
+**/Properties/launchSettings.json
+
+# Logs and temporary files
+*.log
+logs/
+Log/
+[Ll]ogs/
+*.tmp
+*.temp
+*.swp
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# SSL/TLS Certificates
+*.pfx
+*.key
+*.crt
+*.csr
+*.pem
+*.cert
+
+# Database files
+*.mdf
+*.ldf
+*.sqlite
+*.db
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Test results
+TestResults/
+[Tt]est[Rr]esult*/
+coverage/
+coverage.*
