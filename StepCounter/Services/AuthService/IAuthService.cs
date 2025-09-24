@@ -6,6 +6,6 @@ namespace StepCounter.Services;
 
 public interface IAuthService
 {
-    public Task<AuthResponseDto> LoginAsync(LoginUserDto loginUserDto, string password);
+    public Task<AuthResponseDto?> LoginAsync(LoginUserDto loginUserDto, string password);
     public Task<RegisterUserDto> RegisterAsync(User userToRegister, string password);
 }

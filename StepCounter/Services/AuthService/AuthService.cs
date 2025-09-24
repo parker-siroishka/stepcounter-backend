@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
@@ -26,7 +27,7 @@ public class AuthService: IAuthService
         _configuration = configuration;
     }
 
-    public async Task<AuthResponseDto> LoginAsync(LoginUserDto loginUserDto, string password)
+    public async Task<AuthResponseDto?> LoginAsync(LoginUserDto loginUserDto, string password)
     {
         var existingUser = await _dbContext.Users
             .FirstOrDefaultAsync(o => o.Username == loginUserDto.UserName || o.Email == loginUserDto.UserName);
@@ -39,7 +40,7 @@ public class AuthService: IAuthService
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
         
-        var tokenDescriptor = new SecurityTokenDescriptor
+        var accessTokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]
             {
@@ -54,12 +55,22 @@ public class AuthService: IAuthService
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
         };
         
-        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var accessToken = tokenHandler.CreateToken(accessTokenDescriptor);
+        var refreshToken = GenerateRefreshToken();
+        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+        
+        existingUser.UpdatedAt = DateTime.UtcNow;
+        existingUser.RefreshToken = refreshToken;
+        existingUser.RefreshTokenExpiryTime = refreshTokenExpiresAt;
+        await _dbContext.SaveChangesAsync();
+        
         return new AuthResponseDto
         {
-            Token = tokenHandler.WriteToken(token),
+            AccessToken = tokenHandler.WriteToken(accessToken),
+            RefreshToken = refreshToken,
+            RefreshTokenExpiresAt = refreshTokenExpiresAt,
             Username = existingUser.Username,
-            ExpiresAt = tokenDescriptor.Expires.Value,
+            AccessTokenExpiresAt = accessTokenDescriptor.Expires.Value,
         };
     }
     
@@ -74,5 +85,13 @@ public class AuthService: IAuthService
             UserName = user.Username,
             Email = user.Email,
         };
+    }
+    
+    private static string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 }

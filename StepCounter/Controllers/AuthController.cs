@@ -26,10 +26,9 @@ public class AuthController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
     {
-        var loggedInUser = await _authService.LoginAsync(loginUserDto, loginUserDto.Password);
-        if (loggedInUser == null) return BadRequest(new { message = "Username or password is incorrect" });
-        return Ok(loggedInUser);
-        
+        var authResponseDto = await _authService.LoginAsync(loginUserDto, loginUserDto.Password);
+        if (authResponseDto == null) return BadRequest(new { message = "Username or password is incorrect" });
+        return Ok(authResponseDto);
     }
     
     [AllowAnonymous]
