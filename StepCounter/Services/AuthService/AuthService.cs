@@ -35,27 +35,8 @@ public class AuthService: IAuthService
         
         var passwordVerificationResult = _passwordHasher.VerifyHashedPassword(existingUser, existingUser.PasswordHash, loginUserDto.Password);
         if (passwordVerificationResult == PasswordVerificationResult.Failed) return null;
-        
-        // Json Web Token Generation
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
-        
-        var accessTokenDescriptor = new SecurityTokenDescriptor
-        {
-            Subject = new ClaimsIdentity(new Claim[]
-            {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Sub, existingUser.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, existingUser.Email)
-            }),
-            IssuedAt = DateTime.UtcNow,
-            Issuer = _configuration["Jwt:Issuer"],
-            Audience = _configuration["Jwt:Audience"],
-            Expires = DateTime.UtcNow.AddMinutes(60),
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-        };
-        
-        var accessToken = tokenHandler.CreateToken(accessTokenDescriptor);
+
+        var (accessToken, accessTokenExpiresAt) = GenerateAccessToken(existingUser);
         var refreshToken = GenerateRefreshToken();
         var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
         
@@ -66,11 +47,11 @@ public class AuthService: IAuthService
         
         return new AuthResponseDto
         {
-            AccessToken = tokenHandler.WriteToken(accessToken),
+            AccessToken = accessToken,
             RefreshToken = refreshToken,
             RefreshTokenExpiresAt = refreshTokenExpiresAt,
             Username = existingUser.Username,
-            AccessTokenExpiresAt = accessTokenDescriptor.Expires.Value,
+            AccessTokenExpiresAt = accessTokenExpiresAt,
         };
     }
     
@@ -87,7 +68,31 @@ public class AuthService: IAuthService
         };
     }
     
-    private static string GenerateRefreshToken()
+    public (string token, DateTime expiresAt) GenerateAccessToken(User user)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+
+        var descriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email)
+            }),
+            IssuedAt = DateTime.UtcNow,
+            Issuer = _configuration["Jwt:Issuer"],
+            Audience = _configuration["Jwt:Audience"],
+            Expires = DateTime.UtcNow.AddMinutes(60),
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+        };
+
+        var token = handler.CreateToken(descriptor);
+        return (handler.WriteToken(token), descriptor.Expires!.Value);
+    }
+    
+    public string GenerateRefreshToken()
     {
         var randomNumber = new byte[64];
         using var rng = RandomNumberGenerator.Create();

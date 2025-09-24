@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StepCounter.Data;
+using StepCounter.DTOs.Auth;
 using StepCounter.Entities;
 using StepCounter.Entities.User;
 using StepCounter.Services;
@@ -36,7 +37,8 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterUserDto registerUserDto)
     {
         var existingUser = await _dbContext.Users
-            .FirstOrDefaultAsync(o => o.Email == registerUserDto.Email || o.Username == registerUserDto.UserName);
+            .FirstOrDefaultAsync(o => o.Email == registerUserDto.Email || 
+                                      o.Username == registerUserDto.UserName);
         if (existingUser != null) return BadRequest("User already exists");
 
         var userToRegister = new User
@@ -54,9 +56,35 @@ public class AuthController : ControllerBase
         return Ok(new { registeredUser.UserName, registeredUser.Email });
 
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Refresh([FromBody] RefreshTokenDto refreshTokenDto)
+    {
+        var existingUser = await _dbContext.Users
+            .FirstOrDefaultAsync(o => o.Id == refreshTokenDto.UserId);
+        if (existingUser == null) return Unauthorized("User not found");
+        if (existingUser.RefreshToken != refreshTokenDto.RefreshToken) return Unauthorized("Invalid refresh token");
+        if (existingUser.RefreshTokenExpiryTime < DateTime.UtcNow) return Unauthorized("Refresh token expired");
+        
+        var (accessToken, accessTokenExpiresAt) = _authService.GenerateAccessToken(existingUser);
+        var refreshToken = _authService.GenerateRefreshToken();
+        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+        existingUser.RefreshToken = refreshToken;
+        existingUser.RefreshTokenExpiryTime = refreshTokenExpiresAt;
+        await _dbContext.SaveChangesAsync();
+        
+        return Ok(new AuthResponseDto
+        {
+            AccessToken = accessToken,
+            AccessTokenExpiresAt = accessTokenExpiresAt,
+            RefreshToken = refreshToken,
+            RefreshTokenExpiresAt = refreshTokenExpiresAt,
+            Username = existingUser.Username
+        });
+    }
     
     [Authorize]
-    [HttpGet("secret")]
+    [HttpGet]
     public IActionResult GetSecret()
     {
         return Ok(new { message = "You accessed a protected endpoint!" });
