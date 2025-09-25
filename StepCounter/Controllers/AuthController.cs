@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StepCounter.Data;
@@ -81,12 +80,5 @@ public class AuthController : ControllerBase
             RefreshTokenExpiresAt = refreshTokenExpiresAt,
             Username = existingUser.Username
         });
-    }
-    
-    [Authorize]
-    [HttpGet]
-    public IActionResult GetSecret()
-    {
-        return Ok(new { message = "You accessed a protected endpoint!" });
     }
 }
