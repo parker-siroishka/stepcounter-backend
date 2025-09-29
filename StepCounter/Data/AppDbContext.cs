@@ -26,5 +26,15 @@ namespace StepCounter.Data
             }
             return await base.SaveChangesAsync(cancellationToken);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>(user =>
+            {
+                user.OwnsOne(x => x.Preferences);
+            });
+            
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

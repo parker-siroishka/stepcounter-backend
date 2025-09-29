@@ -1,12 +1,9 @@
-using System.ComponentModel.DataAnnotations;
 using StepCounter.Enums;
 
 namespace StepCounter.Entities.User;
 
 public class UserPreferences : BaseEntity
 {
-    [Key]
-    public Guid UserId { get; set; }
     public int DailyStepGoal { get; set; }
     public double DailyDistanceGoal { get; set; }
     public Theme  Theme { get; set; }
@@ -14,7 +11,6 @@ public class UserPreferences : BaseEntity
 
     public UserPreferences()
     {
-        UserId = Guid.NewGuid();
         DailyStepGoal = 10000;
         DailyDistanceGoal = 8.0;
         Theme = Theme.Light;
