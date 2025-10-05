@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StepCounter.Data;
 using StepCounter.DTOs.Auth;
 using StepCounter.Entities;
-using StepCounter.Entities.User;
+using StepCounter.Entities.Users;
 using StepCounter.Services;
 
 namespace StepCounter.Controllers;
@@ -43,6 +43,7 @@ public class AuthController : ControllerBase
         var userToRegister = new User
         {
             Id = Guid.NewGuid(),
+            Role = "user",
             Username = registerUserDto.UserName,
             Email = registerUserDto.Email,
             CreatedAt = DateTime.UtcNow,

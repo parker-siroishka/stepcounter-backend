@@ -9,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), 
+        o  => o.UseNetTopologySuite()));
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();

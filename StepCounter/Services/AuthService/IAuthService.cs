@@ -1,6 +1,6 @@
 using StepCounter.DTOs.Auth;
 using StepCounter.Entities;
-using StepCounter.Entities.User;
+using StepCounter.Entities.Users;
 
 namespace StepCounter.Services;
 

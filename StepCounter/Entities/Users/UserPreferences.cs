@@ -1,6 +1,6 @@
 using StepCounter.Enums;
 
-namespace StepCounter.Entities.User;
+namespace StepCounter.Entities.Users;
 
 public class UserPreferences : BaseEntity
 {
@@ -15,7 +15,7 @@ public class UserPreferences : BaseEntity
         DailyDistanceGoal = 8.0;
         Theme = Theme.Light;
         Unit = Unit.Metric;
-        CreatedAt = DateTime.UtcNow;
-        UpdatedAt = DateTime.UtcNow;
+        CreatedAt = DateTimeOffset.UtcNow;
+        UpdatedAt = DateTimeOffset.UtcNow;
     }
 }
