@@ -70,8 +70,8 @@ namespace StepCounter.Data
             {
                 if (entity.State == EntityState.Added)
                 {
-                    entity.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
-                    entity.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+                    entity.Property("CreatedAt").CurrentValue = DateTimeOffset.UtcNow;
+                    entity.Property("UpdatedAt").CurrentValue = DateTimeOffset.UtcNow;
                 }
                 else if (entity.State == EntityState.Modified)
                 {

@@ -2,7 +2,7 @@ using StepCounter.Entities.Users;
 
 namespace StepCounter.Entities.Step;
 
-public class StepRecord
+public class StepRecord : BaseEntity
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
