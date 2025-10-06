@@ -4,7 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StepCounter.Data;
 using StepCounter.Seed;
-using StepCounter.Services;
+using StepCounter.Services.AuthService;
+using StepCounter.Services.RouteProgressService;
+using StepCounter.Services.StepIngestionService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,8 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IStepIngestionService, StepIngestionService>();
+builder.Services.AddScoped<IRouteProgressService, RouteProgressService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

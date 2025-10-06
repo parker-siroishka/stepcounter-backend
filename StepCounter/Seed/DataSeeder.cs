@@ -24,6 +24,7 @@ public static class DataSeeder
             Id = Guid.NewGuid(),
             Username = "Parker Siroishka",
             Email = "test@test.com",
+            // TODO: Add password hashing for known password
             PasswordHash = "hashed_password",
             AvatarUrl = "https://fastly.picsum.photos/id/823/200/300.jpg?hmac=Sv69FIuXkj79IVp4uZ1YpgRHDGP0jadf5nSiTx1xSoo",
             Role = "User",
@@ -125,5 +126,10 @@ public static class DataSeeder
         dbContext.StepRecords.AddRange(steps);
 
         await dbContext.SaveChangesAsync();
+        
+        await dbContext.Database.ExecuteSqlRawAsync(
+            @"UPDATE ""Routes"" 
+              SET ""TotalDistance"" = ST_Length(""RouteGeometry""::geography)
+              WHERE ""RouteGeometry"" IS NOT NULL;");
     }
 }

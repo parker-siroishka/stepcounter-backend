@@ -66,6 +66,7 @@ namespace StepCounter.Data
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
             ChangeTracker.DetectChanges();
+            // Set CreatedAt and UpdatedAt values for all entities
             foreach (var entity in ChangeTracker.Entries())
             {
                 if (entity.State == EntityState.Added)
@@ -75,8 +76,24 @@ namespace StepCounter.Data
                 }
                 else if (entity.State == EntityState.Modified)
                 {
-                    entity.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+                    entity.Property("UpdatedAt").CurrentValue = DateTimeOffset.UtcNow;
                 }
+            }
+
+            var newOrUpdatedRoutes = ChangeTracker.Entries<Route>()
+                .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
+                .Select(e => e.Entity)
+                .ToList();
+            
+            // Calculate route total distance
+            foreach (var route in newOrUpdatedRoutes)
+            {
+                await Database.ExecuteSqlRawAsync(
+                    @"UPDATE ""Routes""
+                      SET ""TotalDistance"" = ST_Length(""RouteGeometry""::geography)
+                      WHERE ""Id"" = @p0;",
+                    parameters: [route.Id]);
+
             }
             return await base.SaveChangesAsync(cancellationToken);
         }

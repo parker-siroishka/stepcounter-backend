@@ -1,8 +1,8 @@
 using StepCounter.DTOs.Auth;
-using StepCounter.Entities;
+using StepCounter.DTOs.User;
 using StepCounter.Entities.Users;
 
-namespace StepCounter.Services;
+namespace StepCounter.Services.AuthService;
 
 public interface IAuthService
 {

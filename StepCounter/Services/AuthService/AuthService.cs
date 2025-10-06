@@ -7,10 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StepCounter.Data;
 using StepCounter.DTOs.Auth;
-using StepCounter.Entities;
+using StepCounter.DTOs.User;
 using StepCounter.Entities.Users;
 
-namespace StepCounter.Services;
+namespace StepCounter.Services.AuthService;
 
 public class AuthService: IAuthService
 {
@@ -36,9 +36,9 @@ public class AuthService: IAuthService
 
         var (accessToken, accessTokenExpiresAt) = GenerateAccessToken(existingUser);
         var refreshToken = GenerateRefreshToken();
-        var refreshTokenExpiresAt = DateTime.UtcNow.AddDays(7);
+        var refreshTokenExpiresAt = DateTimeOffset.UtcNow.AddDays(7);
         
-        existingUser.UpdatedAt = DateTime.UtcNow;
+        existingUser.UpdatedAt = DateTimeOffset.UtcNow;
         existingUser.RefreshToken = refreshToken;
         existingUser.RefreshTokenExpiryTime = refreshTokenExpiresAt;
         await _dbContext.SaveChangesAsync();

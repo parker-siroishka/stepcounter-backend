@@ -1,4 +1,4 @@
-namespace StepCounter.Entities;
+namespace StepCounter.DTOs.User;
 
 public class RegisterUserDto
 {

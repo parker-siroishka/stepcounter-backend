@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StepCounter.Data;
 using StepCounter.DTOs.Auth;
-using StepCounter.Entities;
+using StepCounter.DTOs.User;
 using StepCounter.Entities.Users;
-using StepCounter.Services;
+using StepCounter.Services.AuthService;
 
 namespace StepCounter.Controllers;
 
@@ -46,8 +46,8 @@ public class AuthController : ControllerBase
             Role = "user",
             Username = registerUserDto.UserName,
             Email = registerUserDto.Email,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
+            CreatedAt = DateTimeOffset.UtcNow,
+            UpdatedAt = DateTimeOffset.UtcNow,
             AvatarUrl = registerUserDto.AvatarUrl,
             Preferences = new UserPreferences()
         };
