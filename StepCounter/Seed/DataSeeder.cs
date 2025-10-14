@@ -22,10 +22,9 @@ public static class DataSeeder
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "Parker Siroishka",
+            Username = "parker",
             Email = "test@test.com",
-            // TODO: Add password hashing for known password
-            PasswordHash = "hashed_password",
+            PasswordHash = "AQAAAAIAAYagAAAAEJBW+2lAl4wev6qaqR2ZObm57MnM2QQ7/+r53d8zz3KJm5BwsshzsoZV1bZb4CQqtQ==", // password is password
             AvatarUrl = "https://fastly.picsum.photos/id/823/200/300.jpg?hmac=Sv69FIuXkj79IVp4uZ1YpgRHDGP0jadf5nSiTx1xSoo",
             Role = "User",
             Preferences = new UserPreferences()

@@ -13,5 +13,5 @@ public class Route : BaseEntity
     public LineString RouteGeometry { get; set; } = null!;
     public double TotalDistance { get; set; }
     public ICollection<Checkpoint> Checkpoints { get; set; } = new List<Checkpoint>();
-    public ICollection<UserRouteProgress> RoutesProgress { get; set; } = new List<UserRouteProgress>();
+    public UserRouteProgress? RouteProgress { get; set; }
 }

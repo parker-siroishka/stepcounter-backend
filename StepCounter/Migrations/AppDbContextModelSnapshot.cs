@@ -170,7 +170,8 @@ namespace StepCounter.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RouteId");
+                    b.HasIndex("RouteId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -255,8 +256,8 @@ namespace StepCounter.Migrations
             modelBuilder.Entity("StepCounter.Entities.UserRouteProgress", b =>
                 {
                     b.HasOne("StepCounter.Entities.Routes.Route", "Route")
-                        .WithMany("RoutesProgress")
-                        .HasForeignKey("RouteId")
+                        .WithOne("RouteProgress")
+                        .HasForeignKey("StepCounter.Entities.UserRouteProgress", "RouteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -312,7 +313,7 @@ namespace StepCounter.Migrations
                 {
                     b.Navigation("Checkpoints");
 
-                    b.Navigation("RoutesProgress");
+                    b.Navigation("RouteProgress");
                 });
 
             modelBuilder.Entity("StepCounter.Entities.Users.User", b =>

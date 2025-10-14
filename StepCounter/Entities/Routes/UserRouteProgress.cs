@@ -9,7 +9,7 @@ public class UserRouteProgress : BaseEntity
     public Guid UserId { get; set; }
     public User User { get; set; } = null!;
     public Guid RouteId { get; set; }
-    public Route Route { get; set; }
+    public Route Route { get; set; } = null!;
     public double DistanceTravelled { get; set; }
     public int Steps { get; set; }
     public DateTimeOffset StartedAt { get; set; }

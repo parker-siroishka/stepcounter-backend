@@ -39,19 +39,18 @@ namespace StepCounter.Data
                 .WithOne(r => r.Creator)
                 .HasForeignKey(r => r.CreatorId)
                 .OnDelete(DeleteBehavior.SetNull);
-            // Route-UserRouteProgress
-            modelBuilder.Entity<Route>()
-                .HasMany(r => r.RoutesProgress)
-                .WithOne(urp => urp.Route)
-                .HasForeignKey(urp => urp.RouteId)
-                .OnDelete(DeleteBehavior.Cascade);
             // Route-Checkpoint
             modelBuilder.Entity<Route>()
                 .HasMany(r => r.Checkpoints)
                 .WithOne(c => c.Route)
                 .HasForeignKey(c => c.RouteId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
+            // Route-UserRouteProgress
+            modelBuilder.Entity<Route>()
+                .HasOne(r => r.RouteProgress)
+                .WithOne(urp => urp.Route)
+                .HasForeignKey<UserRouteProgress>(urp => urp.RouteId)
+                .OnDelete(DeleteBehavior.Cascade);
             // Geometry Configurations
             modelBuilder.Entity<Checkpoint>()
                 .Property(c => c.Location)
@@ -69,23 +68,24 @@ namespace StepCounter.Data
             // Set CreatedAt and UpdatedAt values for all entities
             foreach (var entity in ChangeTracker.Entries())
             {
-                if (entity.State == EntityState.Added)
+                switch (entity.State)
                 {
-                    entity.Property("CreatedAt").CurrentValue = DateTimeOffset.UtcNow;
-                    entity.Property("UpdatedAt").CurrentValue = DateTimeOffset.UtcNow;
-                }
-                else if (entity.State == EntityState.Modified)
-                {
-                    entity.Property("UpdatedAt").CurrentValue = DateTimeOffset.UtcNow;
+                    case EntityState.Added:
+                        entity.Property("CreatedAt").CurrentValue = DateTimeOffset.UtcNow;
+                        entity.Property("UpdatedAt").CurrentValue = DateTimeOffset.UtcNow;
+                        break;
+                    case EntityState.Modified:
+                        entity.Property("UpdatedAt").CurrentValue = DateTimeOffset.UtcNow;
+                        break;
                 }
             }
-
+            
             var newOrUpdatedRoutes = ChangeTracker.Entries<Route>()
                 .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified)
                 .Select(e => e.Entity)
                 .ToList();
             
-            // Calculate route total distance
+            // Calculate route total distance on new or updated routes
             foreach (var route in newOrUpdatedRoutes)
             {
                 await Database.ExecuteSqlRawAsync(
