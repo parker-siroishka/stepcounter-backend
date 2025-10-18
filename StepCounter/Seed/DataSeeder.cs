@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using NetTopologySuite.Geometries;
 using StepCounter.Data;
 using StepCounter.Entities;
-using StepCounter.Entities.Routes;
 using StepCounter.Entities.Step;
 using StepCounter.Entities.Users;
 using Route = StepCounter.Entities.Routes.Route;
@@ -63,16 +62,6 @@ public static class DataSeeder
             }) { SRID = 4326 }
         };
         dbContext.Routes.AddRange(route1, route2);
-        
-        // CHECKPOINTS
-        var checkpoints = new List<Checkpoint>
-        {
-            new() { Id = Guid.NewGuid(), Route = route1, Order = 1, Location = new Point(153.0281, -27.4698) { SRID = 4326 } },
-            new() { Id = Guid.NewGuid(), Route = route1, Order = 2, Location = new Point(153.0332, -27.4710) { SRID = 4326 } },
-            new() { Id = Guid.NewGuid(), Route = route2, Order = 1, Location = new Point(153.0210, -27.4815) { SRID = 4326 } },
-            new() { Id = Guid.NewGuid(), Route = route2, Order = 2, Location = new Point(153.0235, -27.4810) { SRID = 4326 } }
-        };
-        dbContext.Checkpoints.AddRange(checkpoints);
         
         // --- USER ROUTE PROGRESS ---
         var userProgress1 = new UserRouteProgress

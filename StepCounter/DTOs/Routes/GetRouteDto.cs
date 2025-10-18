@@ -8,5 +8,4 @@ public class GetRouteDto
     public double TotalDistance { get; set; }
     public UserRouteProgressDto? RouteProgress { get; set; }
     public List<CoordinateDto> Coordinates { get; set; } = [];
-    public List<CheckpointDto> Checkpoints { get; set; } = [];
 }

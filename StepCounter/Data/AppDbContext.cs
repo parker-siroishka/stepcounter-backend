@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using StepCounter.Entities;
-using StepCounter.Entities.Routes;
 using StepCounter.Entities.Step;
 using StepCounter.Entities.Users;
 using Route = StepCounter.Entities.Routes.Route;
@@ -13,7 +12,6 @@ namespace StepCounter.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Route> Routes { get; set; }
-        public DbSet<Checkpoint> Checkpoints { get; set; }
         public DbSet<UserRouteProgress> UserRouteProgress { get; set; }
         public DbSet<StepRecord> StepRecords { get; set; }
             
@@ -39,12 +37,6 @@ namespace StepCounter.Data
                 .WithOne(r => r.Creator)
                 .HasForeignKey(r => r.CreatorId)
                 .OnDelete(DeleteBehavior.SetNull);
-            // Route-Checkpoint
-            modelBuilder.Entity<Route>()
-                .HasMany(r => r.Checkpoints)
-                .WithOne(c => c.Route)
-                .HasForeignKey(c => c.RouteId)
-                .OnDelete(DeleteBehavior.Cascade);
             // Route-UserRouteProgress
             modelBuilder.Entity<Route>()
                 .HasOne(r => r.RouteProgress)
@@ -52,9 +44,6 @@ namespace StepCounter.Data
                 .HasForeignKey<UserRouteProgress>(urp => urp.RouteId)
                 .OnDelete(DeleteBehavior.Cascade);
             // Geometry Configurations
-            modelBuilder.Entity<Checkpoint>()
-                .Property(c => c.Location)
-                .HasColumnType("geometry(Point, 4326)");
             modelBuilder.Entity<Route>()
                 .Property(r => r.RouteGeometry)
                 .HasColumnType("geometry(LineString, 4326)");

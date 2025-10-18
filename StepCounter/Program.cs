@@ -62,7 +62,7 @@ builder.Services.AddScoped<IStepIngestionService, StepIngestionService>();
 builder.Services.AddScoped<IRouteProgressService, RouteProgressService>();
 builder.Services.AddScoped<IRouteService, RouteService>();
 
-builder.Services.AddAutoMapper(cfg => { },typeof(MappingProfile).Assembly);
+builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile).Assembly);
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

@@ -15,15 +15,13 @@ public class MappingProfile : Profile
                 {
                     Latitude = c.Y,
                     Longitude = c.X
-                }).ToList()))
-            .ForMember(dest => dest.Checkpoints, opt => opt.MapFrom(src => 
-                src.Checkpoints.Select(c => new CheckpointDto
-                {
-                    Order = c.Order,
-                    Longitude = c.Location.X,
-                    Latitude = c.Location.Y
                 }).ToList()));
         
-        CreateMap<UserRouteProgress, UserRouteProgressDto>();
+        CreateMap<UserRouteProgress, UserRouteProgressDto>()
+            .ForMember(dest => dest.PercentComplete, opt => opt.MapFrom(src => 
+                src.Route != null && src.Route.TotalDistance > 0 
+                    ? (float)(src.DistanceTravelled / src.Route.TotalDistance) 
+                    : 0f))
+            .ForMember(dest => dest.CurrentLocation, opt => opt.Ignore()); // We'll calculate this in the service
     }
 }

@@ -8,4 +8,5 @@ public class UserRouteProgressDto
     public DateTimeOffset StartedAt { get; set; }
     public DateTimeOffset? CompletedAt { get; set; }
     public float PercentComplete { get; set; }
+    public CoordinateDto? CurrentLocation { get; set; }
 }
